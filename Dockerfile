@@ -38,14 +38,21 @@ FROM eclipse-temurin:17-jre-alpine
 # Set /app as the working directory in the runtime container
 WORKDIR /app
 
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
 # Copy only the JARfile from the "builder" stage
 # We do not copy maven, source code, or build files
 # This keeps the final runtime image smaller and clearner
 COPY --from=builder /app/target/*.jar /app.jar
 
+RUN chown -R appuser:appgroup /app
+
+USER appuser
+
 # Document that the application uses the port provided by PORT
-EXPOSE $PORT
+EXPOSE 8080
 
 # Command executed when the container starts 
 # It starts our spring boot application using java
 ENTRYPOINT ["java", "-jar", "/app.jar"]
+ 
