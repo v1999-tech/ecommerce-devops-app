@@ -5,25 +5,25 @@
 # Use a Maven image that already contains Java 17.
 # Maven is required to compile and package our Spring Boot application.
 # "builder" is the name given to this build stage.
-FROM maven:3.9.6-eclipse-temurin-17 AS builder
+# FROM maven:3.9.6-eclipse-temurin-17 AS builder
 
 # Set /app as the working directory inside the container.
 # All following commands will work from this directory.
-WORKDIR /app
+# WORKDIR /app
 
 # Copy pom.xml from our local project into /app in the container.
 # pom.xml contains Maven dependencies and build configuration.
-COPY pom.xml .
+# COPY pom.xml .
 
 # Copy the application's source code into /app/src.
-COPY src ./src
+# COPY src ./src
 
 # Build/package the Spring Boot application using Maven.
 # -B = batch mode, useful for automated/CI builds.
 # package = compile, test phase, and create the JAR.
 # -DskipTests = skip executing tests during this Docker build.
 # The generated JAR will be created inside /app/target/.
-RUN mvn -B package -DskipTests
+# RUN mvn -B package -DskipTests
 
 
 # ==================================================================
@@ -43,7 +43,9 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 # Copy only the JARfile from the "builder" stage
 # We do not copy maven, source code, or build files
 # This keeps the final runtime image smaller and clearner
-COPY --from=builder /app/target/*.jar /app.jar
+# COPY --from=builder /app/target/*.jar /app.jar
+
+COPY target/*.jar /app/app.jar
 
 RUN chown -R appuser:appgroup /app
 
